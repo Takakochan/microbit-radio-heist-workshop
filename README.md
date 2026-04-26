@@ -1,230 +1,182 @@
-"""
-Invoice data models for the invoice generator.
-"""
-from dataclasses import dataclass
-from datetime import date
-from typing import List, Optional
-from decimal import Decimal
+# 🕵️ Micro:bit Radio Heist — Hacker Edition
 
+> A gamified micro:bit workshop where students become "Agents" in The Matrix, learning radio communication, variables, loops, and signal detection through 5 progressive challenges.
 
-@dataclass
-class Customer:
-    """Customer information."""
-    name: str
-    contact_name: str = ""  # Person's name for email greeting
-    email: str = ""
-    address: str = ""
-    city: str = ""
-    state: str = ""
-    zip_code: str = ""
-    country: str = ""
-    phone: str = ""
-    btw: str = ""  # BTW/VAT number
+![micro:bit](https://img.shields.io/badge/micro:bit-v2-blue) ![MakeCode](https://img.shields.io/badge/MakeCode-JavaScript-green) ![License](https://img.shields.io/badge/license-MIT-brightgreen)
 
-    def get_full_address(self) -> str:
-        """Get formatted full address."""
-        parts = [self.address, self.city, self.state, self.zip_code, self.country]
-        return ", ".join([p for p in parts if p])
+## 📋 Overview
 
+This project was developed for **Microsoft Dream Space** educational workshops in collaboration with **Codam** (42 Amsterdam network). Students work through a spy-themed narrative, progressing from basic button input to brute-force attacks and signal-strength treasure hunting — all using micro:bit radio.
 
-@dataclass
-class InvoiceItem:
-    """Single item on an invoice."""
-    description: str
-    quantity: Decimal
-    unit_price: Decimal
-    unit: str = "pcs"
-    tax_rate: Optional[Decimal] = None  # If None, use invoice tax_rate
-    currency: Optional[str] = None  # If None, use invoice currency
-    currency_symbol: Optional[str] = None  # If None, use invoice currency_symbol
+Designed for students aged 12–16 with no prior coding experience. Duration: approximately 60–90 minutes.
 
-    @property
-    def subtotal(self) -> Decimal:
-        """Calculate subtotal for this item."""
-        return self.quantity * self.unit_price
+## 🧭 My Role: Project Manager & Facilitator Enablement
 
-    def get_currency_symbol(self, fallback_symbol: str = "$") -> str:
-        """Get currency symbol for this item."""
-        return self.currency_symbol if self.currency_symbol else fallback_symbol
+This was a team effort. The **workshop narrative** (the spy-themed Matrix storyline) and the **micro:bit challenge code** were created by fellow team members. As project manager, I coordinated the team, kept the project on track, and built everything needed to make the workshop *deliverable* — the infrastructure that ensures a first-time facilitator can walk into a room and run it confidently.
 
-    def format_currency(self, amount: Decimal, fallback_symbol: str = "$") -> str:
-        """Format amount with currency symbol."""
-        symbol = self.get_currency_symbol(fallback_symbol)
-        return f"{symbol}{amount:,.2f}"
+### The Challenge
 
-    def to_dict(self) -> dict:
-        """Convert to dictionary."""
-        return {
-            'description': self.description,
-            'quantity': float(self.quantity),
-            'unit': self.unit,
-            'unit_price': float(self.unit_price),
-            'subtotal': float(self.subtotal),
-            'currency': self.currency,
-            'currency_symbol': self.currency_symbol
-        }
+The team built a great set of micro:bit programs and an engaging storyline. But managing a project means seeing the full picture — and to actually run this in a real masterclass with real time constraints, we needed more around it:
 
+- Facilitators who had never seen the material needed to **understand the full flow, anticipate where students get stuck, and troubleshoot live**
+- The workshop had to be **executable within a strict time window** — no room for improvisation
+- The facilitation team included **non-Dutch speakers**, so materials couldn't stay in one language
+- The **teacher-side micro:bit infrastructure** (The Matrix server, treasure beacon) needed to be built, tested, and ready before students arrived
 
-@dataclass
-class Invoice:
-    """Complete invoice with all details."""
-    invoice_number: str
-    customer: Customer
-    items: List[InvoiceItem]
-    issue_date: date
-    due_date: date
-    currency: str = "USD"
-    currency_symbol: str = "$"
-    tax_rate: Decimal = Decimal("0.10")
-    tax_label: str = ""  # e.g., "BTW 21%", "BTW vrijgesteld", etc.
-    notes: str = ""
-    payment_terms: str = "Net 30"
-    description: str = ""  # Invoice description/purpose
+### What I Contributed
 
-    # Custom details table (optional)
-    details_table: Optional[List[List[str]]] = None  # List of rows, first row is headers
+**As project manager:**
 
-    # Travel receipt (optional)
-    travel_receipt_file: Optional[str] = None  # Filename of the travel receipt PDF in Google Drive
+| Responsibility | Details |
+|----------------|---------|
+| **Project coordination** | Managed the team timeline, divided responsibilities, tracked progress, and ensured all pieces came together for delivery day. |
+| **Team support** | Helped team members troubleshoot their code, reviewed work, and bridged communication gaps within the group. |
+| **Rehearsal & user testing** | Organised a rehearsal of the full masterclass with young children to measure actual timing per challenge, identify bottlenecks, and validate that the flow works in practice — not just on paper. Adjustments were made based on what we observed. |
+| **Risk management** | Identified potential failure points early (time overruns, radio conflicts, language barriers) and built solutions before they became problems. |
+| **Stakeholder communication** | Coordinated between the team, Microsoft Dream Space, and Codam to align expectations with what we could realistically deliver. |
+| **User testing & rehearsal** | Organised a rehearsal session with young children to validate timing and flow before the actual masterclass — a key step that shaped our final facilitation approach. |
 
-    # Company info (will be loaded from config)
-    company_name: str = ""
-    company_address: str = ""
-    company_phone: str = ""
-    company_email: str = ""
-    company_website: str = ""
+**As facilitator enablement lead:**
 
-    @property
-    def subtotal(self) -> Decimal:
-        """Calculate subtotal (sum of all items before tax)."""
-        return sum(item.subtotal for item in self.items)
+| Deliverable | What it solved |
+|----------------|---------------|
+| **Trilingual teacher reference guides** (NL / EN / JP) | Any facilitator can run the workshop confidently, regardless of language. Each guide includes per-challenge goals, student tasks, MakeCode blocks used, teacher notes, and — critically — a section on **where students get stuck** and how to help them. |
+| **Workshop flow restructured for 60-minute format** | Mapped the team's narrative arc (boot screen → challenges → treasure hunt) to realistic time blocks, identified which optional tasks to cut under pressure, and built in buffer moments (the "help your fellow agent" pause between phases). |
+| **Preparation checklist & troubleshooting guide** | A pre-flight checklist covering envelope preparation, Matrix micro:bit testing, MakeCode setup on all laptops, and a problem/solution table for the most common failures (wrong radio group, for-loop not starting, Matrix not responding). |
+| **The Matrix server program** | The teacher-side micro:bit that drives the workshop — broadcasting test signals in Phase 1, then listening across all student groups and responding only to the secret key in Phase 4. Configurable `SECRET_KEY` and `RESPONSE_MSG` so facilitators can customise per session. |
+| **Treasure beacon program** | A dedicated micro:bit hidden in the room that continuously broadcasts for the RSSI-based hot/cold treasure hunt in Challenge 5. |
+| **Student code scaffolding** | Restructured the team's solutions into starter files with `// TODO` placeholders, clear comments, and progressive difficulty — so students build the code themselves rather than copy-pasting. |
+| **Team support** | Supporting team members throughout development, coordinating between the different parts of the project, and making sure everything came together for delivery day. |
 
-    @property
-    def tax_amount(self) -> Decimal:
-        """Calculate total tax amount (supports per-item tax rates)."""
-        total_tax = Decimal("0")
-        for item in self.items:
-            # Use item tax_rate if specified, otherwise use invoice tax_rate
-            item_tax_rate = item.tax_rate if item.tax_rate is not None else self.tax_rate
-            total_tax += item.subtotal * item_tax_rate
-        return total_tax
+### Rehearsal & User Testing
 
-    @property
-    def total(self) -> Decimal:
-        """Calculate total (subtotal + tax)."""
-        return self.subtotal + self.tax_amount
+Before the actual masterclass, we ran a **rehearsal session with young children** to measure real timing and identify bottlenecks. This was essential — you can't plan a 60-minute workshop on guesswork.
 
-    def get_tax_breakdown(self) -> dict:
-        """Get tax breakdown by rate for display."""
-        tax_by_rate = {}
-        for item in self.items:
-            item_tax_rate = item.tax_rate if item.tax_rate is not None else self.tax_rate
-            rate_key = float(item_tax_rate)
-            if rate_key not in tax_by_rate:
-                tax_by_rate[rate_key] = {
-                    'subtotal': Decimal("0"),
-                    'tax': Decimal("0")
-                }
-            tax_by_rate[rate_key]['subtotal'] += item.subtotal
-            tax_by_rate[rate_key]['tax'] += item.subtotal * item_tax_rate
-        return tax_by_rate
+The surprising result: the young children completed the challenges **significantly faster** than Codam students had during our internal testing. It turned out that children approached the MakeCode blocks with fewer assumptions — they just tried things, while the adult students tended to overthink the logic before touching anything. This insight directly influenced our facilitation strategy: we learned to encourage "just build it and see what happens" rather than explaining everything upfront.
 
-    def get_items_by_currency(self) -> dict:
-        """
-        Group items by currency.
+This rehearsal validated the workshop timing, exposed unclear instructions we hadn't noticed, and gave us confidence that the flow would work on delivery day.
 
-        Returns:
-            Dict with currency code as key and dict containing:
-            - 'symbol': currency symbol
-            - 'items': list of items in that currency
-            - 'subtotal': subtotal for that currency
-            - 'tax': tax amount for that currency
-            - 'total': total for that currency
-        """
-        from collections import defaultdict
+### What I Learned
 
-        currency_groups = defaultdict(lambda: {
-            'symbol': '',
-            'items': [],
-            'subtotal': Decimal("0"),
-            'tax': Decimal("0"),
-            'total': Decimal("0")
-        })
+This project taught me what it means to manage a project end-to-end. **Great content needs great preparation to land in a real classroom** — and the only way to know if your plan actually works is to test it with real users. Running a rehearsal with children before the actual masterclass was one of the best decisions we made: it revealed timing issues and stumbling points that no amount of planning on paper could have caught. I learned to think about failure modes before they happen, coordinate across language barriers, iterate based on real feedback, and balance ambition with the reality of a 60-minute time box. These are skills that go beyond programming, but they're essential for shipping anything that involves real people and real deadlines.
 
-        for item in self.items:
-            # Use item currency if specified, otherwise use invoice currency
-            item_currency = item.currency if item.currency else self.currency
-            item_symbol = item.currency_symbol if item.currency_symbol else self.currency_symbol
+## 🗓 Workshop Flow
 
-            # Add item to its currency group
-            currency_groups[item_currency]['symbol'] = item_symbol
-            currency_groups[item_currency]['items'].append(item)
-            currency_groups[item_currency]['subtotal'] += item.subtotal
+```
+Challenge 1: Hacker-ID          → Buttons, LEDs, timing
+     ↓
+  [System Test — teacher broadcasts on group 1]
+     ↓
+Challenge 2: Receive Signals    → Radio groups, variables, events
+     ↓
+  [Phase 1 complete — help fellow agents]
+     ↓
+  [Team Formation — envelopes with secret group numbers]
+     ↓
+Challenge 3: Team Search        → Send + receive, walk around to find partner
+     ↓
+  [Recap — ready for the real mission]
+     ↓
+Challenge 4: Hack The Matrix    → For-loops, brute force (hardest challenge)
+     ↓
+  [Matrix Unlocked — clue revealed]
+     ↓
+Challenge 5: Find the Treasure  → RSSI signal strength, hot/cold radar
+```
 
-            # Calculate tax for this item
-            item_tax_rate = item.tax_rate if item.tax_rate is not None else self.tax_rate
-            item_tax = item.subtotal * item_tax_rate
-            currency_groups[item_currency]['tax'] += item_tax
-            currency_groups[item_currency]['total'] += item.subtotal + item_tax
+### Learning Objectives
 
-        return dict(currency_groups)
+| Challenge | Concepts Introduced |
+|-----------|-------------------|
+| 1 — Hacker-ID | Input (buttons), output (LED icons), sequencing (`pause`, `clearScreen`) |
+| 2 — Receive Signals | Radio groups, `on received number`, variables |
+| 3 — Team Search | `sendNumber` + `on received number` in one program, peer communication |
+| 4 — Hack The Matrix | `for` loops, brute force, variables (`index`), string vs number |
+| 5 — Find the Treasure | RSSI (signal strength), LED bar graph, sound feedback |
 
-    def format_currency(self, amount: Decimal) -> str:
-        """Format amount with currency symbol."""
-        return f"{self.currency_symbol}{amount:,.2f}"
+## 📁 Project Structure
 
-    def to_dict(self) -> dict:
-        """Convert to dictionary."""
-        return {
-            'invoice_number': self.invoice_number,
-            'customer': {
-                'name': self.customer.name,
-                'email': self.customer.email,
-                'address': self.customer.get_full_address()
-            },
-            'items': [item.to_dict() for item in self.items],
-            'issue_date': self.issue_date.isoformat(),
-            'due_date': self.due_date.isoformat(),
-            'currency': self.currency,
-            'subtotal': float(self.subtotal),
-            'tax_rate': float(self.tax_rate),
-            'tax_amount': float(self.tax_amount),
-            'total': float(self.total),
-            'notes': self.notes,
-            'payment_terms': self.payment_terms
-        }
+```
+radio-heist/
+├── README.md
+├── challenges/                  # Student starter code (scaffolded with TODOs)
+│   ├── challenge1_hacker_id.js
+│   ├── challenge2_receive_signals.js
+│   ├── challenge3_team_search.js
+│   ├── challenge4_hack_the_matrix.js
+│   └── challenge5_find_the_treasure.js
+├── solutions/                   # Complete working solutions (for facilitators)
+│   ├── solution1_hacker_id.js
+│   ├── solution2_receive_signals.js
+│   ├── solution3_team_search.js
+│   ├── solution4_hack_the_matrix.js
+│   └── solution5_find_the_treasure.js
+├── teacher/                     # Facilitator-side micro:bit programs
+│   ├── the_matrix_server.js     # Drives the whole workshop narrative
+│   └── treasure_beacon.js       # Hidden beacon for Challenge 5
+└── docs/                        # Teacher reference guides
+    ├── teacher_reference_EN.md
+    ├── teacher_reference_NL.md
+    └── teacher_reference_JP.md
+```
 
+## 🚀 How to Use
 
-class InvoiceNumberGenerator:
-    """Generate sequential invoice numbers."""
+### For Students
+1. Open [MakeCode for micro:bit](https://makecode.microbit.org/)
+2. Click **"New Project"**
+3. Switch to **JavaScript** view (toggle at the top)
+4. Copy-paste the code from the relevant `challenges/` file
+5. Fill in the `// TODO` sections
+6. Download to your micro:bit
 
-    def __init__(self, prefix: str = "INV", start_number: int = 1000,
-                 counter_file: str = "config/invoice_counter.txt"):
-        self.prefix = prefix
-        self.start_number = start_number
-        self.counter_file = counter_file
+> **Tip:** We recommend building the code yourself by following the Solution slide, even if you don't fully understand it yet. The act of building it will help you understand how it works.
 
-    def get_next_number(self) -> str:
-        """Get the next invoice number."""
-        try:
-            with open(self.counter_file, 'r') as f:
-                current = int(f.read().strip())
-        except FileNotFoundError:
-            current = self.start_number
+### For Teachers / Facilitators
+1. **Before the workshop:**
+   - Flash `teacher/the_matrix_server.js` onto the teacher's micro:bit
+   - Flash `teacher/treasure_beacon.js` onto a second micro:bit and hide it
+   - Stick envelopes with group numbers (2x each, numbers 2–15) under laptops
+   - Open MakeCode on all student laptops
+   - Read the teacher reference guide in `docs/` for your language
+2. **During the workshop:**
+   - Press **Button A** on The Matrix to start Phase 1 (system test broadcast)
+   - Press **Button B** to switch to Phase 2 (listening for brute-force key)
+   - Press **A+B** to check current mode / reset to idle
+3. **Important:** Group 1 is reserved for The Matrix — do NOT assign to students
 
-        # Increment and save
-        next_number = current + 1
-        with open(self.counter_file, 'w') as f:
-            f.write(str(next_number))
+### Configuration
 
-        return f"{self.prefix}-{next_number:05d}"
+In `the_matrix_server.js`, customise per session:
+```javascript
+const SECRET_KEY = 42        // The number students must brute-force
+const RESPONSE_MSG = "NORTH" // The clue revealed when key is found
+const TEST_NUMBER = 7        // Number broadcast during system test
+const MIN_GROUP = 2          // Lowest student group number
+const MAX_GROUP = 15         // Highest student group number
+```
 
-    def get_current_number(self) -> str:
-        """Get the current invoice number without incrementing."""
-        try:
-            with open(self.counter_file, 'r') as f:
-                current = int(f.read().strip())
-        except FileNotFoundError:
-            current = self.start_number
+## 🎓 Workshop Context
 
-        return f"{self.prefix}-{current:05d}"
+This workshop is part of educational programming activities at:
+- **[Microsoft Dream Space](https://www.microsoft.com/nl-nl/dreamspace)** — Inspiring the next generation of innovators
+- **[Codam](https://www.codam.nl/)** (42 Amsterdam network) — Peer-to-peer coding education
+
+## 🛠 Technical Notes
+
+- All code is written in **MakeCode JavaScript** (not standard Node.js) — paste directly into the MakeCode editor
+- Code runs on **micro:bit v2** but is backwards-compatible with v1 (except sound in Challenge 5)
+- Radio range is approximately 10–20 meters indoors
+- RSSI values are negative: `-40` is stronger/closer than `-80`
+- The Matrix server cycles through student groups rapidly since micro:bit can only listen on one group at a time
+
+## 📄 License
+
+MIT License — feel free to use, modify, and share for educational purposes.
+
+## 👩‍💻 Author
+
+**Takako** — Classical musician turned software engineer  
+Freelance developer & educator | Codam (42 Amsterdam) student  
+
+17 years as a professional bassoonist (Tokyo University of the Arts → Conservatorium van Amsterdam, cum laude), now building at the intersection of music, technology, and education. This project reflects my approach: lead the project, support the team, and make sure the experience works for everyone in the room.
