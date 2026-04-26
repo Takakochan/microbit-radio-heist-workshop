@@ -179,4 +179,4 @@ MIT License — feel free to use, modify, and share for educational purposes.
 **Takako** — Classical musician turned software engineer  
 Freelance developer & educator | Codam (42 Amsterdam) student  
 
-17 years as a professional bassoonist (Tokyo University of the Arts → Conservatorium van Amsterdam, cum laude), now building at the intersection of music, technology, and education. This project reflects my approach: lead the project, support the team, and make sure the experience works for everyone in the room.
+International professional bassoonist (Tokyo University of the Arts → Conservatorium van Amsterdam, Master cum laude, Tokyo Metropolitan Symphony Orchestra, L'orchestre Les Musiciens du Prince – Monaco),  now building at the intersection of music, technology, and education. This project reflects my approach: lead the project, support the team, and make sure the experience works for everyone.
